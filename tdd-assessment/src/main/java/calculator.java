@@ -1,4 +1,4 @@
-package com.src;
+package src.main.java;
 
 public class calculator{
 
