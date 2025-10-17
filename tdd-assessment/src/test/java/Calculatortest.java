@@ -22,4 +22,10 @@ public class Calculatortest {
     }
 
 
+    @Test
+    void testDivide() {
+        assertEquals(2, Calculator.divide(4, 2));
+    }
+
+
 }
