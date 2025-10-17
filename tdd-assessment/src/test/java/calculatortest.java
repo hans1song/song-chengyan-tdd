@@ -11,4 +11,9 @@ class CalculatorTest {
 
     private final Calculator calculator = new Calculator();
 
+    @Test
+    void testAdd() {
+        assertEquals(5, calculator.add(2, 3));
+    }
+
 }
