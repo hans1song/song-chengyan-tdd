@@ -49,6 +49,14 @@ public class ReservationService {
      */
     public void cancel(String userId, String bookId) {
         // TODO: Implement using TDD
+        if (!reservationRepo.existsByUserAndBook(userId, bookId)) {
+            throw new IllegalArgumentException("Reservation does not exist");
+        }
+        reservationRepo.delete(userId, bookId);
+        Book book = bookRepo.findById(bookId);
+        book.setCopiesAvailable(book.getCopiesAvailable() + 1);
+        bookRepo.save(book);
+        
     }
 
     /**

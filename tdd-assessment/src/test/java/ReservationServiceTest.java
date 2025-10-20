@@ -47,7 +47,7 @@ public class ReservationServiceTest {
 // cancel method test cases
     @Test
     void cancel_whenReservationExists() {
-        Book book = new Book("1", "The Lord of the Rings", 0);
+        Book book = new Book("1", "The Lord of the Rings", 1);
         bookRepository.save(book);
         reservationService.reserve("user1", "1");
         reservationService.cancel("user1", "1");
@@ -60,7 +60,7 @@ public class ReservationServiceTest {
         
     }
 
-    
+
 
     
     
