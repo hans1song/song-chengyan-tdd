@@ -16,6 +16,23 @@ public class ReservationService{
      */
     public void reserve(String userId, String bookId) {
         // TODO: Implement using TDD
+        Book book = bookRepo.findById(bookId);
+        if (book == null) {
+            throw new IllegalArgumentException("Book not found");
+        }
+        if (book.getCopiesAvailable() == 0) {
+            throw new IllegalStateException("No copies available");
+        }
+        if (reservationRepo.existsByUserAndBook(userId, bookId)) {
+            throw new IllegalStateException("User already reserved");
+        }
+        Reservation reservation = new Reservation();
+        reservation.setUserId(userId);
+        reservation.setBookId(bookId);
+        reservationRepo.save(reservation);
+        book.setCopiesAvailable(book.getCopiesAvailable() - 1);
+        bookRepo.save(book);
+        
     }
 
     /**
