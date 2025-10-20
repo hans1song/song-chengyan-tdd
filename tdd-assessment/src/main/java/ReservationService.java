@@ -48,15 +48,21 @@ public class ReservationService {
      * Throws IllegalArgumentException if no such reservation exists.
      */
     public void cancel(String userId, String bookId) {
-        // TODO: Implement using TDD
-        if (!reservationRepo.existsByUserAndBook(userId, bookId)) {
-            throw new IllegalArgumentException("Reservation does not exist");
-        }
-        reservationRepo.delete(userId, bookId);
         Book book = bookRepo.findById(bookId);
-        book.setCopiesAvailable(book.getCopiesAvailable() + 1);
+        if (book == null) {
+            throw new IllegalArgumentException("The book (ID: " + bookId
+                    + ") associated with the reservation does not exist, indicating a potential data inconsistency.");
+        }
+        if (!reservationRepo.existsByUserAndBook(userId, bookId)) {
+            throw new IllegalArgumentException("Reservation does not exist or has already been canceled.");
+        }
+
+        reservationRepo.delete(userId, bookId);
+
+        int currentCopies = book.getCopiesAvailable();
+        book.setCopiesAvailable(currentCopies + 1);
+
         bookRepo.save(book);
-        
     }
 
     /**
