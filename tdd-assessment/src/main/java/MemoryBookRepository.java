@@ -1,6 +1,6 @@
 import java.util.*;
 
-class MemoryBookRepository implements IBookRepository {
+public class MemoryBookRepository implements IBookRepository {
     private final Map<String, Book> books = new HashMap<>();
 
     @Override

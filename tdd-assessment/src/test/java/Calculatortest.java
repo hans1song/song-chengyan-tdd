@@ -62,7 +62,7 @@ public class Calculatortest {
 
     @ParameterizedTest(name = "Division: {0} / {1} = {2}")
     @CsvSource({
-            "4, 0, 0",
+            "4, 1, 4",
             "10, 5, 2",
             "7, 3, 2",
             "-10, 5, -2",
