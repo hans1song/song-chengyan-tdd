@@ -24,6 +24,7 @@ public class ReservationServiceTest {
         reservationService.reserve("user1", "1");
         assertTrue(reservationRepository.existsByUserAndBook("user1", "1"));
     }
+
     @Test
     void reserve_whenBookDoesNotExist() {
         assertThrows(IllegalArgumentException.class, () -> reservationService.reserve("user1", "1"));
@@ -96,13 +97,19 @@ public class ReservationServiceTest {
     @Test
     void listReservationsForBook_whenBookHasNoReservations() {
         assertTrue(reservationService.listReservationsForBook("1").isEmpty());
+    }    
+
+
+// Add a boundary test(Attempting to reserve with no copies left.) ps. The other two error tests have been written above
+
+    @Test
+    void reserve_whenReservingLastCopy_decrementsCopiesToZero() {
+        Book book = new Book("1", "The Last Copy", 1);
+        bookRepository.save(book);
+        reservationService.reserve("user1", "1");
+        Book updatedBook = bookRepository.findById("1");
+        assertEquals(0, updatedBook.getCopiesAvailable());
+    
     }
 
-    
-
-
-
-    
-    
-    
 }
