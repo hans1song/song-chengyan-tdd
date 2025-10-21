@@ -114,5 +114,31 @@ public class ReservationServiceTest {
 
 // PartC start
 
+    @Test
+    void reserve_whenNoCopiesAvailable_priorityUser() {
+        User priorityUser = new User("priorityUser1","priorityUser1", true);
+        userRepository.addUser(priorityUser);
+        Book book = new Book("book123", "Computer Systems: A Programmer's Perspective", 0);
+        bookRepository.save(book);
+        reservationService.reserve("priorityUser1", "book123");
+        Book updatedBook = bookRepository.findById("book123");
+        assertEquals(1, updatedBook.getWaitingList().size()); 
+        assertEquals("priorityUser1", updatedBook.getWaitingList().get(0)); 
+        assertFalse(reservationRepository.existsByUserAndBook("priorityUser1", "book123"));
+        assertEquals(0, updatedBook.getCopiesAvailable());
+    }
+
+    @Test
+    void reserve_whenNoCopiesAvailable_notPriorityUser() {
+        User regularUser = new User("regularUser1","regularUser1", false);
+        userRepository.addUser(regularUser);
+        Book book = new Book("book123", "Computer Systems: A Programmer's Perspective", 0);
+        bookRepository.save(book);
+        assertThrows(IllegalStateException.class, () -> {
+            reservationService.reserve("regularUser1", "book123");
+        });
+        Book bookAfterAttempt = bookRepository.findById("book123");
+        assertTrue(bookAfterAttempt.getWaitingList().isEmpty());
+    }
    
 }
