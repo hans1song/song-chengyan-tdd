@@ -78,7 +78,14 @@ public class ReservationService {
      */
     public List<Reservation> listReservationsForBook(String bookId) {
         // TODO: Implement using TDD
-        return null;
+        List<Reservation> allReservations = reservationRepo.findAll(); // Assuming findAll() method exists in IReservationRepository
+        List<Reservation> bookReservations = new ArrayList<>();
+        for (Reservation reservation : allReservations) {
+            if (reservation.getBookId().equals(bookId)) {
+                bookReservations.add(reservation);
+            }
+        }
+        return bookReservations;
     }
 
 }
