@@ -27,5 +27,10 @@ public class MemoryReservationRepository implements IReservationRepository {
             r.getUserId().equals(userId) && r.getBookId().equals(bookId));
     }
 
+    @Override
+    public List<Reservation> findAll() {
+        return new ArrayList<>(reservations);
+    }
+
 }
 

@@ -5,5 +5,5 @@ public interface IReservationRepository {
     boolean existsByUserAndBook(String userId, String bookId);
     List<Reservation> findByUser(String userId);
     void delete(String userId, String bookId);
-    
+    List<Reservation> findAll();
 }
