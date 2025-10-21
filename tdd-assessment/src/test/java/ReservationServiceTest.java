@@ -100,7 +100,7 @@ public class ReservationServiceTest {
     }    
 
 
-// Add a boundary test(Attempting to reserve with no copies left.) ps. The other two error tests have been written above
+// Add a boundary test(Reserving the last copy.) ps. The other two error tests have been written above
 
     @Test
     void reserve_whenReservingLastCopy_decrementsCopiesToZero() {
