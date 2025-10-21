@@ -83,7 +83,20 @@ public class ReservationServiceTest {
         assertTrue(reservationService.listReservations("user1").isEmpty());
     }
 
+// listReservationsForBook method test case
+    @Test
+    void listReservationsForBook_whenBookHasReservations() {
+        Book book = new Book("1", "Book One", 2);
+        bookRepository.save(book);
+        reservationService.reserve("user1", "1");
+        reservationService.reserve("user2", "1");
+        assertEquals(2, reservationService.listReservationsForBook("1").size());
+    }
 
+    @Test
+    void listReservationsForBook_whenBookHasNoReservations() {
+        assertTrue(reservationService.listReservationsForBook("1").isEmpty());
+    }
 
     
 
