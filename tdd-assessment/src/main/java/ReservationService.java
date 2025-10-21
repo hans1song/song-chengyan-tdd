@@ -3,10 +3,13 @@ import java.util.*;
 public class ReservationService {
     private final IBookRepository bookRepo;
     private final IReservationRepository reservationRepo;
+    private final IUserRepository userRepository;
 
-    public ReservationService(IBookRepository bookRepo, IReservationRepository reservationRepo) {
+
+    public ReservationService(IBookRepository bookRepo, IReservationRepository reservationRepo, IUserRepository userRepository) {
         this.bookRepo = bookRepo;
         this.reservationRepo = reservationRepo;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -16,16 +19,24 @@ public class ReservationService {
      */
     public void reserve(String userId, String bookId) {
         Book book = findAndValidateBook(bookId, userId);
-        createReservationAndUpdateBook(book, userId);
+        if (book != null) {
+            createReservationAndUpdateBook(book, userId);
+        }
     }
 
     private Book findAndValidateBook(String bookId, String userId) {
         Book book = bookRepo.findById(bookId);
+        User user = userRepository.findById(userId);
         if (book == null) {
             throw new IllegalArgumentException("Book not found");
         }
         if (book.getCopiesAvailable() == 0) {
-            throw new IllegalStateException("No copies available");
+            if(user.priority==true){
+                book.getWaitingList().add(userId);
+                return null;
+            }else{
+                throw new IllegalStateException("No copies available");
+            }
         }
         if (reservationRepo.existsByUserAndBook(userId, bookId)) {
             throw new IllegalStateException("User already reserved");

@@ -8,12 +8,16 @@ public class ReservationServiceTest {
     private IBookRepository bookRepository;
     private IReservationRepository reservationRepository;
     private ReservationService reservationService;
+    private IUserRepository userRepository;
+
 
     @BeforeEach
     void setUp() {
         bookRepository = new MemoryBookRepository();
         reservationRepository = new MemoryReservationRepository();
-        reservationService = new ReservationService(bookRepository, reservationRepository);
+        userRepository = new MemoryUserRepository();
+        reservationService = new ReservationService(bookRepository, reservationRepository, userRepository);
+        
     }
 
 // reserve method test cases
@@ -30,17 +34,20 @@ public class ReservationServiceTest {
         assertThrows(IllegalArgumentException.class, () -> reservationService.reserve("user1", "1"));
     }
 
-    @Test
-    void reserve_whenNoCopiesAvailable() { 
-        Book book = new Book("1", "The Lord of the Rings", 0);
-        bookRepository.save(book);
-       assertThrows(IllegalStateException.class, () -> reservationService.reserve("user1", "1"));
-    }
-    
+        @Test
+        void reserve_whenNoCopiesAvailable() {
+            Book book = new Book("1", "The Lord of the Rings", 0);
+            bookRepository.save(book);
+            User user = new User("user1", "Test User");
+            userRepository.addUser(user);
+           assertThrows(IllegalStateException.class, () -> reservationService.reserve("user1", "1"));
+        }    
     @Test
     void reserve_whenUserAlreadyReserved() {
         Book book = new Book("1", "The Lord of the Rings", 1);
         bookRepository.save(book);
+        User user = new User("user1", "Test User");
+        userRepository.addUser(user);
         reservationService.reserve("user1", "1");
         assertThrows(IllegalStateException.class, () -> reservationService.reserve("user1", "1"));
     }
@@ -140,5 +147,5 @@ public class ReservationServiceTest {
         Book bookAfterAttempt = bookRepository.findById("book123");
         assertTrue(bookAfterAttempt.getWaitingList().isEmpty());
     }
-   
+
 }
