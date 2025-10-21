@@ -60,6 +60,31 @@ public class ReservationServiceTest {
         
     }
 
+// listReservations method test cases
+    @Test
+    void listReservations_whenUserHasReservations() {
+        Book book1 = new Book("1", "Book One", 1);
+        Book book2 = new Book("2", "Book Two", 1);
+        bookRepository.save(book1);
+        bookRepository.save(book2);
+
+        reservationService.reserve("user1", "1");
+        reservationService.reserve("user1", "2");
+
+        assertEquals(2, reservationService.listReservations("user1").size());
+        assertTrue(reservationService.listReservations("user1").stream()
+                .anyMatch(r -> r.getBookId().equals("1")));
+        assertTrue(reservationService.listReservations("user1").stream()
+                .anyMatch(r -> r.getBookId().equals("2")));
+    }
+
+    @Test
+    void listReservations_whenUserHasNoReservations() {
+        assertTrue(reservationService.listReservations("user1").isEmpty());
+    }
+
+    
+
 
 
     
