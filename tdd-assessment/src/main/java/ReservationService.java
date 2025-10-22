@@ -18,33 +18,25 @@ public class ReservationService {
      * Throws IllegalStateException if no copies available or user already reserved.
      */
     public void reserve(String userId, String bookId) {
-        Book book = findAndValidateBook(bookId, userId);
-        if (book != null) {
-            createReservationAndUpdateBook(book, userId);
-        }
-    }
-
-    private Book findAndValidateBook(String bookId, String userId) {
         Book book = bookRepo.findById(bookId);
-        User user = userRepository.findById(userId);
         if (book == null) {
             throw new IllegalArgumentException("Book not found");
         }
+
         if (book.getCopiesAvailable() == 0) {
-            if(user.priority==true){
+            User user = userRepository.findById(userId);
+            if (user != null && user.priority == true) {
                 book.getWaitingList().add(userId);
-                return null;
-            }else{
+                return; 
+            } else {
                 throw new IllegalStateException("No copies available");
             }
         }
+
         if (reservationRepo.existsByUserAndBook(userId, bookId)) {
             throw new IllegalStateException("User already reserved");
         }
-        return book;
-    }
-
-    private void createReservationAndUpdateBook(Book book, String userId) {
+        
         Reservation reservation = new Reservation();
         reservation.setUserId(userId);
         reservation.setBookId(book.getId());
@@ -70,8 +62,7 @@ public class ReservationService {
 
         reservationRepo.delete(userId, bookId);
 
-        int currentCopies = book.getCopiesAvailable();
-        book.setCopiesAvailable(currentCopies + 1);
+        book.setCopiesAvailable(book.getCopiesAvailable() + 1);
 
         bookRepo.save(book);
     }
@@ -80,7 +71,6 @@ public class ReservationService {
      * List all active reservations for a given user.
      */
     public List<Reservation> listReservations(String userId) {
-        // TODO: Implement using TDD
         return reservationRepo.findByUser(userId);
     }
 
@@ -88,7 +78,6 @@ public class ReservationService {
      * list all reservations for a book.
      */
     public List<Reservation> listReservationsForBook(String bookId) {
-        // TODO: Implement using TDD
         List<Reservation> allReservations = reservationRepo.findAll(); // Assuming findAll() method exists in IReservationRepository
         List<Reservation> bookReservations = new ArrayList<>();
         for (Reservation reservation : allReservations) {
